@@ -1,19 +1,46 @@
-import React from "react"
+import React, { useState } from "react"
 import TableRow from "./TableRow"
 import { useQuery } from "react-query"
 import { toast } from "react-hot-toast"
-
+import emailjs from "@emailjs/browser"
 const Table = () => {
+  const [checkedRows, setCheckedRows] = useState([])
+
+  const handleSendEmail = async () => {
+    const formattedRows = checkedRows
+      .map((row) => {
+        return `Name: ${row.name}\nEmail: ${row.email}\nPhone: ${row.phone}\nHobbies: ${row.hobbies}\n`
+      })
+      .join("\n")
+
+    const emailData = {
+      to_email: "info@redpositive.in",
+      message: formattedRows,
+    }
+    try {
+      const response = await emailjs.send(
+        "service_omtw20j",
+        "template_ydbojtg",
+        emailData,
+        "em4Mkgp4vhRuOsTMo"
+      )
+
+      setCheckedRows([])
+    } catch (error) {
+      console.error("Error sending email:", error)
+    }
+  }
+
   const { data = [], refetch } = useQuery({
     queryKey: ["data"],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5000/get-data`)
+      const res = await fetch(
+        `https://redpositive-server-five.vercel.app/get-data`
+      )
       const data = await res.json()
       return data
     },
   })
-
-  console.log(data)
 
   const handleAddData = async (event) => {
     event.preventDefault()
@@ -28,16 +55,17 @@ const Table = () => {
 
     const newData = { name, email, phone, hobbies }
 
-    console.log(newData)
-
     try {
-      const response = await fetch("http://localhost:5000/add-data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newData),
-      })
+      const response = await fetch(
+        "https://redpositive-server-five.vercel.app/add-data",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newData),
+        }
+      )
 
       const data = await response.json()
 
@@ -58,8 +86,15 @@ const Table = () => {
     <div className="rounded-md bg-white p-10">
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-xl font-bold">List of Data</h1>
-        <div className="flex gap-3">
-          <button className="btn btn-secondary text-white">Send data</button>
+        <div className="flex gap-2">
+          {checkedRows.length > 0 && (
+            <button
+              onClick={handleSendEmail}
+              className="btn btn-secondary text-white"
+            >
+              Send data
+            </button>
+          )}
           <label htmlFor="add-data" className="btn btn-primary text-white">
             Add New data
           </label>
@@ -140,7 +175,13 @@ const Table = () => {
           </thead>
           <tbody>
             {data.map((row, index) => (
-              <TableRow key={index} index={index} row={row} refetch={refetch} />
+              <TableRow
+                key={index}
+                index={index}
+                row={row}
+                refetch={refetch}
+                setCheckedRows={setCheckedRows}
+              />
             ))}
           </tbody>
         </table>

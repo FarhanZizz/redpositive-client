@@ -1,12 +1,27 @@
-import React from "react"
+import React, { useState } from "react"
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
 import { toast } from "react-hot-toast"
 
-const TableRow = ({ row, index, refetch }) => {
+const TableRow = ({ row, index, refetch, setCheckedRows }) => {
+  const [isChecked, setIsChecked] = useState(false)
   const { name, email, phone, hobbies, _id } = row
 
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked)
+
+    if (event.target.checked) {
+      // Add the checked row to the checkedRows state
+      setCheckedRows((prevCheckedRows) => [...prevCheckedRows, row])
+    } else {
+      // Remove the unchecked row from the checkedRows state
+      setCheckedRows((prevCheckedRows) =>
+        prevCheckedRows.filter((checkedRow) => checkedRow !== row)
+      )
+    }
+  }
+
   const handleDelete = () => {
-    fetch(`http://localhost:5000/delete-data/${_id}`, {
+    fetch(`https://redpositive-server-five.vercel.app/delete-data/${_id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
@@ -31,13 +46,16 @@ const TableRow = ({ row, index, refetch }) => {
     const newData = { name, email, phone, hobbies }
 
     try {
-      const response = await fetch(`http://localhost:5000/update-data/${_id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newData),
-      })
+      const response = await fetch(
+        `https://redpositive-server-five.vercel.app/update-data/${_id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newData),
+        }
+      )
 
       const data = await response.json()
 
@@ -57,7 +75,12 @@ const TableRow = ({ row, index, refetch }) => {
     <tr>
       <td>
         <label>
-          <input type="checkbox" className="checkbox" />
+          <input
+            type="checkbox"
+            className="checkbox checkbox-primary"
+            checked={isChecked}
+            onChange={handleCheckboxChange}
+          />
         </label>
       </td>
       <td>{index + 1}</td>
