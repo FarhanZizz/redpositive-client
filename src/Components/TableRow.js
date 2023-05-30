@@ -1,8 +1,22 @@
 import React from "react"
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
+import { toast } from "react-hot-toast"
 
-const TableRow = (props) => {
-  const { name, email, phone, hobbies } = props.row
+const TableRow = ({ row, index, refetch }) => {
+  const { name, email, phone, hobbies, _id } = row
+
+  const handleDelete = () => {
+    fetch(`http://localhost:5000/delete-data/${_id}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.deletedCount === 1) {
+          refetch()
+          toast.success("Deleted Successfully")
+        }
+      })
+  }
   return (
     <tr>
       <td>
@@ -10,7 +24,7 @@ const TableRow = (props) => {
           <input type="checkbox" className="checkbox" />
         </label>
       </td>
-      <td>{props.index + 1}</td>
+      <td>{index + 1}</td>
       <td>
         <div className="font-bold">{name}</div>
       </td>
@@ -79,7 +93,10 @@ const TableRow = (props) => {
           </div>
         </div>
 
-        <button className="btn btn-error btn-sm rounded-md text-white">
+        <button
+          onClick={handleDelete}
+          className="btn btn-error btn-sm rounded-md text-white"
+        >
           <TrashIcon className="h-5 w-5 " />
         </button>
       </td>

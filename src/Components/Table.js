@@ -140,7 +140,7 @@ const Table = () => {
           </thead>
           <tbody>
             {data.map((row, index) => (
-              <TableRow key={index} index={index} row={row} />
+              <TableRow key={index} index={index} row={row} refetch={refetch} />
             ))}
           </tbody>
         </table>
