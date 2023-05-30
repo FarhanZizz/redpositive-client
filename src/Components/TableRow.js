@@ -1,7 +1,8 @@
 import React from "react"
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
 
-const TableRow = () => {
+const TableRow = (props) => {
+  const { name, email, phone, hobbies } = props.row
   return (
     <tr>
       <td>
@@ -9,13 +10,13 @@ const TableRow = () => {
           <input type="checkbox" className="checkbox" />
         </label>
       </td>
-      <td>1</td>
+      <td>{props.index + 1}</td>
       <td>
-        <div className="font-bold">Farhan Aziz Mukto</div>
+        <div className="font-bold">{name}</div>
       </td>
-      <td>+8801408491626</td>
-      <td>iamfarhanaziz@gmail.com</td>
-      <td>Coding,Gardeing</td>
+      <td>{phone}</td>
+      <td>{email}</td>
+      <td>{hobbies}</td>
       <td className="flex gap-1 items-center ">
         <label
           htmlFor="edit-data"

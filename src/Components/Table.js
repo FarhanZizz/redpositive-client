@@ -1,7 +1,59 @@
 import React from "react"
 import TableRow from "./TableRow"
+import { useQuery } from "react-query"
+import { toast } from "react-hot-toast"
 
 const Table = () => {
+  const { data = [], refetch } = useQuery({
+    queryKey: ["data"],
+    queryFn: async () => {
+      const res = await fetch(`http://localhost:5000/get-data`)
+      const data = await res.json()
+      return data
+    },
+  })
+
+  console.log(data)
+
+  const handleAddData = async (event) => {
+    event.preventDefault()
+
+    const form = event.target
+    const name = form.name.value
+    const email = form.email.value
+    const phone = form.phone.value
+    const hobbies = form.hobbies.value
+
+    const modal = document.getElementById("add-data")
+
+    const newData = { name, email, phone, hobbies }
+
+    console.log(newData)
+
+    try {
+      const response = await fetch("http://localhost:5000/add-data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newData),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.acknowledged) {
+        refetch()
+        form.reset()
+        toast.success("Data Successfully added")
+        modal.checked = false
+      } else {
+        throw new Error(data.message || "Failed to add data")
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
   return (
     <div className="rounded-md bg-white p-10">
       <div className="flex justify-between items-center mb-10">
@@ -15,7 +67,7 @@ const Table = () => {
           <div className="modal">
             <div className="modal-box">
               <h3 className="font-bold text-lg">Add New Data</h3>
-              <form>
+              <form onSubmit={handleAddData}>
                 <div className="form-control my-3">
                   <input
                     type="text"
@@ -87,9 +139,9 @@ const Table = () => {
             </tr>
           </thead>
           <tbody>
-            <TableRow />
-            <TableRow />
-            <TableRow />
+            {data.map((row, index) => (
+              <TableRow key={index} index={index} row={row} />
+            ))}
           </tbody>
         </table>
       </div>
