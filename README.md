@@ -1,6 +1,6 @@
 # Live Site - https://redpositive-task.netlify.app
 
-This is a demo CRUDS(Create, Read, Update, Delete and Send) task for Team RedPositive's Full-stack internship coding task
+This is a demo CRUDS(Create, Read, Update, Delete and Send) task for RedPositive's Full-stack internship coding task
 
 ## This site was built using the following technologies:
 
