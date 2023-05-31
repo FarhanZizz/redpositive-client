@@ -16,3 +16,7 @@ This is a demo CRUDS(Create, Read, Update, Delete and Send) project for RedPosit
 
 ### Server - https://redpositive-server-five.vercel.app
 ### Server Code - https://github.com/FarhanZizz/redpositive-server
+
+I hope you enjoy using the site! If you have any questions or feedback, please don't hesitate to reach out.
+
+Thank You!
